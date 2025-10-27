@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLURL / secondlife:// → Legacy URI Converter</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #181a1b;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .converter {
+    background: #252728;
+    padding: 2em;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 520px;
+    text-align: center;
+  }
+  input {
+    width: 100%;
+    padding: 0.8em;
+    margin-top: 0.5em;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    font-size: 1em;
+  }
+  .examples {
+    font-size: 0.9em;
+    color: #bbb;
+    background: #1f2021;
+    border-radius: 6px;
+    padding: 0.6em;
+    margin: 0.8em 0 1em 0;
+    text-align: left;
+  }
+  .examples code {
+    display: block;
+    background: #333;
+    padding: 0.4em;
+    border-radius: 4px;
+    margin-top: 0.4em;
+    color: #9fe6ff;
+    font-family: "Courier New", monospace;
+  }
+  .result {
+    margin-top: 1em;
+    background: #333;
+    padding: 1em;
+    border-radius: 6px;
+    word-wrap: break-word;
+    user-select: all;
+    transition: all 0.3s ease;
+  }
+  .faded {
+    opacity: 0.5;
+  }
+  footer {
+    margin-top: 1em;
+    font-size: 0.9em;
+    color: #aaa;
+  }
+  footer a {
+    color: #9fe6ff;
+    text-decoration: none;
+  }
+  footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="converter">
+  <h2>SLURL / secondlife:// → Legacy URI Converter</h2>
+  
+  <div class="examples">
+    <strong>Examples of valid input:</strong>
+    <code>http://maps.secondlife.com/secondlife/Morgantown/128/64/25</code>
+    <code>secondlife://Morgantown/128/64/25</code>
+  </div>
+
+  <label for="slurlInput">Enter a SLURL or URI:</label>
+  <input 
+    type="text" 
+    id="slurlInput" 
+    placeholder="Paste your link here..."
+    oninput="convertSLURL()"
+    autocomplete="off"
+  >
+
+  <div id="result" class="result faded">Waiting for input...</div>
+</div>
+
+<footer>
+  Made by <strong>Red Robot</strong> — 
+  <a href="https://redrobotgroup.com" target="_blank">Website</a> | 
+  <a href="https://github.com/redrobotsl" target="_blank">GitHub</a>
+</footer>
+
+<script>
+function convertSLURL() {
+  const input = document.getElementById('slurlInput').value.trim();
+  const resultDiv = document.getElementById('result');
+
+  // Regular expressions for both forms
+  const slurlRegex = /secondlife\/([^/]+)\/(\d+)\/(\d+)\/(\d+)/i;
+  const uriRegex = /secondlife:\/\/([^/]+)\/(\d+)\/(\d+)\/(\d+)/i;
+
+  let match = input.match(slurlRegex) || input.match(uriRegex);
+
+  if (match) {
+    const region = decodeURIComponent(match[1]);
+    const x = match[2];
+    const y = match[3];
+    const z = match[4];
+    const legacyUri = `uri:${region}&${x}&${y}&${z}`;
+    resultDiv.textContent = legacyUri;
+    resultDiv.classList.remove("faded");
+  } else if (input === "") {
+    resultDiv.textContent = "Waiting for input...";
+    resultDiv.classList.add("faded");
+  } else {
+    resultDiv.textContent = "Invalid input. Must be a SLURL or secondlife:// link.";
+    resultDiv.classList.add("faded");
+  }
+}
+</script>
+
+</body>
+</html>
