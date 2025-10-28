@@ -53,14 +53,36 @@
     color: #9fe6ff;
     font-family: "Courier New", monospace;
   }
-  .result {
+  .result-container {
     margin-top: 1em;
+    position: relative;
+  }
+  .result {
     background: #333;
     padding: 1em;
     border-radius: 6px;
     word-wrap: break-word;
     user-select: all;
     transition: all 0.3s ease;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: #6b47dc;
+    border: none;
+    color: #fff;
+    padding: 0.3em 0.7em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    display: none;
+  }
+  .copy-btn:hover {
+    background-color: #5536b4;
+  }
+  .copied {
+    background-color: #2b8a3e !important;
   }
   .faded {
     opacity: 0.5;
@@ -99,7 +121,10 @@
     autocomplete="off"
   >
 
-  <div id="result" class="result faded">Waiting for input...</div>
+  <div class="result-container">
+    <div id="result" class="result faded">Waiting for input...</div>
+    <button id="copyBtn" class="copy-btn" onclick="copyToClipboard()">Copy</button>
+  </div>
 </div>
 
 <footer>
@@ -112,6 +137,7 @@
 function convertSLURL() {
   const input = document.getElementById('slurlInput').value.trim();
   const resultDiv = document.getElementById('result');
+  const copyBtn = document.getElementById('copyBtn');
 
   // Regular expressions for both forms
   const slurlRegex = /secondlife\/([^/]+)\/(\d+)\/(\d+)\/(\d+)/i;
@@ -127,13 +153,31 @@ function convertSLURL() {
     const legacyUri = `uri:${region}&${x}&${y}&${z}`;
     resultDiv.textContent = legacyUri;
     resultDiv.classList.remove("faded");
+    copyBtn.style.display = "inline-block";
   } else if (input === "") {
     resultDiv.textContent = "Waiting for input...";
     resultDiv.classList.add("faded");
+    copyBtn.style.display = "none";
   } else {
     resultDiv.textContent = "Invalid input. Must be a SLURL or secondlife:// link.";
     resultDiv.classList.add("faded");
+    copyBtn.style.display = "none";
   }
+}
+
+function copyToClipboard() {
+  const resultDiv = document.getElementById('result');
+  const copyBtn = document.getElementById('copyBtn');
+  const text = resultDiv.textContent;
+
+  navigator.clipboard.writeText(text).then(() => {
+    copyBtn.textContent = "Copied!";
+    copyBtn.classList.add("copied");
+    setTimeout(() => {
+      copyBtn.textContent = "Copy";
+      copyBtn.classList.remove("copied");
+    }, 1500);
+  });
 }
 </script>
 
