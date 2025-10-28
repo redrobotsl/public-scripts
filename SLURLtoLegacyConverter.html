@@ -35,29 +35,8 @@
     color: #fff;
     font-size: 1em;
   }
-  .examples {
-    font-size: 0.9em;
-    color: #bbb;
-    background: #1f2021;
-    border-radius: 6px;
-    padding: 0.6em;
-    margin: 0.8em 0 1em 0;
-    text-align: left;
-  }
-  .examples code {
-    display: block;
-    background: #333;
-    padding: 0.4em;
-    border-radius: 4px;
-    margin-top: 0.4em;
-    color: #9fe6ff;
-    font-family: "Courier New", monospace;
-  }
-  .result-container {
-    margin-top: 1em;
-    position: relative;
-  }
   .result {
+    margin-top: 1em;
     background: #333;
     padding: 1em;
     border-radius: 6px;
@@ -65,38 +44,38 @@
     user-select: all;
     transition: all 0.3s ease;
   }
-  .copy-btn {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    background-color: #6b47dc;
-    border: none;
-    color: #fff;
-    padding: 0.3em 0.7em;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.8em;
-    display: none;
-  }
-  .copy-btn:hover {
-    background-color: #5536b4;
-  }
-  .copied {
-    background-color: #2b8a3e !important;
-  }
   .faded {
     opacity: 0.5;
   }
-  footer {
-    margin-top: 1em;
+  .copy-btn {
+    margin-top: 0.8em;
+    padding: 0.5em 1em;
+    background-color: #5a2d82;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .copy-btn:hover {
+    background-color: #7b41a8;
+  }
+  .example {
     font-size: 0.9em;
     color: #aaa;
+    margin-bottom: 0.8em;
   }
-  footer a {
-    color: #9fe6ff;
+  .footer {
+    margin-top: 1em;
+    font-size: 0.85em;
+    color: #aaa;
+  }
+  .footer a {
+    color: #a86bff;
     text-decoration: none;
   }
-  footer a:hover {
+  .footer a:hover {
     text-decoration: underline;
   }
 </style>
@@ -105,12 +84,10 @@
 
 <div class="converter">
   <h2>SLURL / secondlife:// → Legacy URI Converter</h2>
-  
-  <div class="examples">
-    <strong>Examples of valid input:</strong>
-    <code>http://maps.secondlife.com/secondlife/Morgantown/128/64/25</code>
-    <code>secondlife://Morgantown/128/64/25</code>
-  </div>
+  <p class="example">
+    Example: <code>http://maps.secondlife.com/secondlife/Morgantown Heights/128/128/25</code><br>
+    or <code>secondlife://Morgantown Heights/128/128/25</code>
+  </p>
 
   <label for="slurlInput">Enter a SLURL or URI:</label>
   <input 
@@ -121,23 +98,21 @@
     autocomplete="off"
   >
 
-  <div class="result-container">
-    <div id="result" class="result faded">Waiting for input...</div>
-    <button id="copyBtn" class="copy-btn" onclick="copyToClipboard()">Copy</button>
+  <div id="result" class="result faded">Waiting for input...</div>
+  <button id="copyButton" class="copy-btn" style="display:none;" onclick="copyToClipboard()">Copy to Clipboard</button>
+
+  <div class="footer">
+    Made by <strong>Red Robot</strong> —
+    <a href="https://redrobotgroup.com" target="_blank">Website</a> • 
+    <a href="https://github.com/redrobotsl" target="_blank">GitHub</a>
   </div>
 </div>
-
-<footer>
-  Made by <strong>Red Robot</strong> — 
-  <a href="https://redrobotgroup.com" target="_blank">Website</a> | 
-  <a href="https://github.com/redrobotsl" target="_blank">GitHub</a>
-</footer>
 
 <script>
 function convertSLURL() {
   const input = document.getElementById('slurlInput').value.trim();
   const resultDiv = document.getElementById('result');
-  const copyBtn = document.getElementById('copyBtn');
+  const copyBtn = document.getElementById('copyButton');
 
   // Regular expressions for both forms
   const slurlRegex = /secondlife\/([^/]+)\/(\d+)\/(\d+)\/(\d+)/i;
@@ -146,7 +121,7 @@ function convertSLURL() {
   let match = input.match(slurlRegex) || input.match(uriRegex);
 
   if (match) {
-    const region = decodeURIComponent(match[1]);
+    const region = encodeURIComponent(match[1]); // Properly encode spaces and symbols
     const x = match[2];
     const y = match[3];
     const z = match[4];
@@ -167,16 +142,11 @@ function convertSLURL() {
 
 function copyToClipboard() {
   const resultDiv = document.getElementById('result');
-  const copyBtn = document.getElementById('copyBtn');
   const text = resultDiv.textContent;
-
   navigator.clipboard.writeText(text).then(() => {
-    copyBtn.textContent = "Copied!";
-    copyBtn.classList.add("copied");
-    setTimeout(() => {
-      copyBtn.textContent = "Copy";
-      copyBtn.classList.remove("copied");
-    }, 1500);
+    const btn = document.getElementById('copyButton');
+    btn.textContent = "Copied!";
+    setTimeout(() => btn.textContent = "Copy to Clipboard", 1500);
   });
 }
 </script>
